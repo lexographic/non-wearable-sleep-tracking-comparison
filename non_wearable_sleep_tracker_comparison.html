@@ -1,0 +1,823 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body, .dash-root {
+    font-family: 'DM Sans', var(--font-sans), sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  .dash-root {
+    padding: 0 0 2rem;
+  }
+
+  .dash-header {
+    padding: 1.5rem 0 1rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 1.5rem;
+  }
+
+  .dash-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .dash-title {
+    font-family: 'DM Serif Display', var(--font-serif), serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+
+  .dash-title em {
+    font-style: italic;
+  }
+
+  .dash-sub {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    font-family: inherit;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+
+  .filter-btn:hover {
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+  }
+
+  .filter-btn.active {
+    background: var(--color-text-primary);
+    color: var(--color-background-primary);
+    border-color: var(--color-text-primary);
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .tracker-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    transition: border-color 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tracker-card:hover {
+    border-color: var(--color-border-secondary);
+  }
+
+  .tracker-card.featured {
+    border: 1.5px solid var(--color-border-info);
+  }
+
+  .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  }
+
+  .card-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .card-badge.top-pick {
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+  }
+
+  .card-badge.new {
+    background: var(--color-background-success);
+    color: var(--color-text-success);
+  }
+
+  .card-badge.enterprise {
+    background: var(--color-background-warning);
+    color: var(--color-text-warning);
+  }
+
+  .card-badge.budget {
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+  }
+
+  .card-badge.sdk {
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+  }
+
+  .card-device-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .card-brand {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .card-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .card-price {
+    font-size: 22px;
+    font-weight: 500;
+  }
+
+  .card-price-note {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+  }
+
+  .card-divider {
+    height: 0.5px;
+    background: var(--color-border-tertiary);
+    margin: 12px 0;
+  }
+
+  .accuracy-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .accuracy-label {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    width: 68px;
+    flex-shrink: 0;
+  }
+
+  .accuracy-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--color-border-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .accuracy-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+
+  .accuracy-val {
+    font-size: 12px;
+    font-weight: 500;
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .sensor-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .sensor-chip {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 99px;
+    border: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-secondary);
+    background: var(--color-background-secondary);
+    font-weight: 400;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .metric-cell {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 8px 10px;
+  }
+
+  .metric-cell-label {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .metric-cell-val {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .feature-list {
+    list-style: none;
+    margin-bottom: 12px;
+  }
+
+  .feature-list li {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    padding: 3px 0;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  .feature-list li .feat-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .caveat-list {
+    list-style: none;
+  }
+
+  .caveat-list li {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    padding: 2px 0;
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  .caveat-list li::before {
+    content: "–";
+    flex-shrink: 0;
+  }
+
+  .card-action-btn {
+    width: 100%;
+    margin-top: 4px;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 8px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .card-action-btn:hover {
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+  }
+
+  .summary-strip {
+    margin-top: 1.5rem;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+  }
+
+  .summary-cell {
+    text-align: center;
+  }
+
+  .summary-cell-label {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+
+  .summary-cell-val {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .summary-cell-sub {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+  }
+
+  .note-strip {
+    margin-top: 1rem;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    line-height: 1.6;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    padding-top: 0.75rem;
+  }
+
+  .hidden { display: none !important; }
+</style>
+
+<div class="dash-root">
+
+  <div class="dash-header">
+    <div class="dash-eyebrow">2025–2026 Buyer's Guide</div>
+    <div class="dash-title">Non-Wearable <em>Sleep Trackers</em></div>
+    <div class="dash-sub">Contactless devices that monitor your sleep without straps, rings, or anything on your body. Ranked by real-world accuracy and value.</div>
+  </div>
+
+  <div class="filter-row">
+    <span class="filter-label">Filter by</span>
+    <button class="filter-btn active" onclick="filterCards('all', this)">All devices</button>
+    <button class="filter-btn" onclick="filterCards('under200', this)">Under $200</button>
+    <button class="filter-btn" onclick="filterCards('apnea', this)">Sleep apnea detection</button>
+    <button class="filter-btn" onclick="filterCards('temp', this)">Temperature control</button>
+    <button class="filter-btn" onclick="filterCards('nosub', this)">No subscription</button>
+  </div>
+
+  <div class="cards-grid" id="cards-grid">
+
+    <!-- Withings Sleep Mat -->
+    <div class="tracker-card featured" data-tags="under200 apnea nosub">
+      <div class="card-accent" style="background: #1D9E75;"></div>
+      <div class="card-badge top-pick">Top pick</div>
+      <div class="card-device-name">Sleep Mat</div>
+      <div class="card-brand">Withings</div>
+      <div class="card-price-row">
+        <span class="card-price">$169</span>
+        <span class="card-price-note">one-time · no subscription</span>
+      </div>
+      <div class="card-divider"></div>
+
+      <div class="accuracy-row">
+        <span class="accuracy-label">Sleep stages</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:83%;background:#1D9E75;"></div></div>
+        <span class="accuracy-val" style="color:#1D9E75;">83%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Apnea (AHI≥15)</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:88%;background:#1D9E75;"></div></div>
+        <span class="accuracy-val" style="color:#1D9E75;">88%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Heart rate</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:90%;background:#1D9E75;"></div></div>
+        <span class="accuracy-val" style="color:#1D9E75;">~90%</span>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="sensor-chips">
+        <span class="sensor-chip">Pneumatic sensor</span>
+        <span class="sensor-chip">Ballistocardiography</span>
+        <span class="sensor-chip">Microphone</span>
+        <span class="sensor-chip">Wi-Fi sync</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-cell-label">Setup</div>
+          <div class="metric-cell-val">Under mattress</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">App</div>
+          <div class="metric-cell-val">Health Mate</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">FDA status</div>
+          <div class="metric-cell-val">Cleared (OSA)</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Dual sleepers</div>
+          <div class="metric-cell-val">2nd mat req'd</div>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li><span class="feat-dot" style="background:#1D9E75;"></span>Tracks deep, light, REM + wake stages nightly</li>
+        <li><span class="feat-dot" style="background:#1D9E75;"></span>FDA-cleared sleep apnea screening (AHI scoring)</li>
+        <li><span class="feat-dot" style="background:#1D9E75;"></span>Snoring detection with audio sensor</li>
+        <li><span class="feat-dot" style="background:#1D9E75;"></span>Smart home integration (IFTTT, lights, thermostat)</li>
+        <li><span class="feat-dot" style="background:#1D9E75;"></span>Shareable clinical PDF sleep diary for doctors</li>
+        <li><span class="feat-dot" style="background:#1D9E75;"></span>Apple Health + Google Fit sync · FSA/HSA eligible</li>
+      </ul>
+
+      <ul class="caveat-list">
+        <li>Requires outlet near bed; not portable</li>
+        <li>Platform beds easier to set up than slatted frames</li>
+        <li>Occasionally reads rest-in-bed as light sleep</li>
+      </ul>
+
+      <button class="card-action-btn" onclick="sendPrompt('Tell me more about the Withings Sleep Mat — how does its apnea detection compare to a home sleep test? ↗')">Ask about Withings ↗</button>
+    </div>
+
+    <!-- Google Nest Hub 2nd Gen -->
+    <div class="tracker-card" data-tags="under200">
+      <div class="card-accent" style="background: #378ADD;"></div>
+      <div class="card-badge budget">Budget-friendly</div>
+      <div class="card-device-name">Nest Hub (2nd Gen)</div>
+      <div class="card-brand">Google</div>
+      <div class="card-price-row">
+        <span class="card-price">$99</span>
+        <span class="card-price-note">+ Fitbit Premium ~$10/mo for full sleep</span>
+      </div>
+      <div class="card-divider"></div>
+
+      <div class="accuracy-row">
+        <span class="accuracy-label">Sleep stages</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:85%;background:#378ADD;"></div></div>
+        <span class="accuracy-val" style="color:#378ADD;">~85%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Solo sleeper</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:85%;background:#378ADD;"></div></div>
+        <span class="accuracy-val" style="color:#378ADD;">Good</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Dual / pets</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:45%;background:#E24B4A;"></div></div>
+        <span class="accuracy-val" style="color:#E24B4A;">Variable</span>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="sensor-chips">
+        <span class="sensor-chip">Soli radar (mmWave)</span>
+        <span class="sensor-chip">Microphone array</span>
+        <span class="sensor-chip">Light sensor</span>
+        <span class="sensor-chip">Temp sensor</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-cell-label">Setup</div>
+          <div class="metric-cell-val">Nightstand</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">App</div>
+          <div class="metric-cell-val">Google Fit / Fitbit</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">No camera</div>
+          <div class="metric-cell-val">Privacy-safe</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Smart home</div>
+          <div class="metric-cell-val">Full Google Home</div>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li><span class="feat-dot" style="background:#378ADD;"></span>Soli radar tracks breathing + movement contactlessly</li>
+        <li><span class="feat-dot" style="background:#378ADD;"></span>Detects snoring, coughing, sleep stages</li>
+        <li><span class="feat-dot" style="background:#378ADD;"></span>Room environment: light, sound, temperature</li>
+        <li><span class="feat-dot" style="background:#378ADD;"></span>Sunrise alarm with gradual display brightening</li>
+        <li><span class="feat-dot" style="background:#378ADD;"></span>Daily sleep summary on device or via Google Assistant</li>
+        <li><span class="feat-dot" style="background:#378ADD;"></span>Audio processed locally — not sent to Google</li>
+      </ul>
+
+      <ul class="caveat-list">
+        <li>Full Sleep Sensing moving to Fitbit Premium paywall</li>
+        <li>Accuracy drops with pets or partners in bed</li>
+        <li>No sleep apnea screening</li>
+      </ul>
+
+      <button class="card-action-btn" onclick="sendPrompt('Is the Google Nest Hub sleep tracking still free in 2025 or does it require Fitbit Premium? ↗')">Ask about Nest Hub ↗</button>
+    </div>
+
+    <!-- Eight Sleep Pod -->
+    <div class="tracker-card" data-tags="temp apnea">
+      <div class="card-accent" style="background: #533AB7;"></div>
+      <div class="card-badge enterprise">Premium system</div>
+      <div class="card-device-name">Pod 5 Cover</div>
+      <div class="card-brand">Eight Sleep</div>
+      <div class="card-price-row">
+        <span class="card-price">$2,549+</span>
+        <span class="card-price-note">+ $24/mo Autopilot subscription</span>
+      </div>
+      <div class="card-divider"></div>
+
+      <div class="accuracy-row">
+        <span class="accuracy-label">Heart rate</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:99%;background:#533AB7;"></div></div>
+        <span class="accuracy-val" style="color:#533AB7;">99%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Deep sleep</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:82%;background:#533AB7;"></div></div>
+        <span class="accuracy-val" style="color:#533AB7;">~82%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">REM sleep</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:65%;background:#BA7517;"></div></div>
+        <span class="accuracy-val" style="color:#BA7517;">Weak</span>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="sensor-chips">
+        <span class="sensor-chip">Embedded fabric sensors</span>
+        <span class="sensor-chip">Active water-tube grid</span>
+        <span class="sensor-chip">AI Autopilot</span>
+        <span class="sensor-chip">Vibration alarm</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-cell-label">Temp range</div>
+          <div class="metric-cell-val">55°F – 110°F</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Zones</div>
+          <div class="metric-cell-val">Dual (partners)</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">HRV tracking</div>
+          <div class="metric-cell-val">Yes (reference-grade)</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Subscription</div>
+          <div class="metric-cell-val">Required for features</div>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li><span class="feat-dot" style="background:#533AB7;"></span>Active dual-zone heating/cooling (per-side control)</li>
+        <li><span class="feat-dot" style="background:#533AB7;"></span>Clinical-grade HR + HRV + respiratory rate tracking</li>
+        <li><span class="feat-dot" style="background:#533AB7;"></span>AI Autopilot adjusts temp in real-time by sleep stage</li>
+        <li><span class="feat-dot" style="background:#533AB7;"></span>Health Check flags anomalies vs. personal baseline</li>
+        <li><span class="feat-dot" style="background:#533AB7;"></span>Vibration smart alarm wakes during light sleep</li>
+        <li><span class="feat-dot" style="background:#533AB7;"></span>Apple Health, Google Fit sync; snoring detection</li>
+      </ul>
+
+      <ul class="caveat-list">
+        <li>Very high upfront cost + mandatory ongoing subscription</li>
+        <li>REM tracking less reliable than wearables</li>
+        <li>Pets/children sharing bed skew data</li>
+        <li>Requires quarterly maintenance (water + filter)</li>
+      </ul>
+
+      <button class="card-action-btn" onclick="sendPrompt('Is the Eight Sleep Pod 5 worth the cost compared to the Withings Sleep Mat for sleep tracking specifically? ↗')">Ask about Eight Sleep ↗</button>
+    </div>
+
+    <!-- Sleepal AI Lamp -->
+    <div class="tracker-card" data-tags="">
+      <div class="card-accent" style="background: #D85A30;"></div>
+      <div class="card-badge new">CES 2026 winner</div>
+      <div class="card-device-name">AI Lamp</div>
+      <div class="card-brand">Sleepal</div>
+      <div class="card-price-row">
+        <span class="card-price">TBA</span>
+        <span class="card-price-note">Kickstarter → retail 2026</span>
+      </div>
+      <div class="card-divider"></div>
+
+      <div class="accuracy-row">
+        <span class="accuracy-label">Respiratory rate</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:88%;background:#D85A30;"></div></div>
+        <span class="accuracy-val" style="color:#D85A30;">High*</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Sleep stages</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:60%;background:#D85A30;"></div></div>
+        <span class="accuracy-val" style="color:#D85A30;">Claimed</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Independent review</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:15%;background:#888780;"></div></div>
+        <span class="accuracy-val" style="color:#888780;">Pending</span>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="sensor-chips">
+        <span class="sensor-chip">mmWave radar</span>
+        <span class="sensor-chip">Thermal array</span>
+        <span class="sensor-chip">Microphone array</span>
+        <span class="sensor-chip">Env sensors</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-cell-label">Setup</div>
+          <div class="metric-cell-val">Bedside lamp</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Privacy</div>
+          <div class="metric-cell-val">Local processing</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">No camera</div>
+          <div class="metric-cell-val">Hardware switch</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Partners</div>
+          <div class="metric-cell-val">Multi-person</div>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li><span class="feat-dot" style="background:#D85A30;"></span>4-sensor fusion: radar + thermal + mic + environment</li>
+        <li><span class="feat-dot" style="background:#D85A30;"></span>Full-spectrum low-blue light with adaptive soundscapes</li>
+        <li><span class="feat-dot" style="background:#D85A30;"></span>Wind-down routine, auto-dims after sleep onset detected</li>
+        <li><span class="feat-dot" style="background:#D85A30;"></span>Smart wake alarm during light sleep window</li>
+        <li><span class="feat-dot" style="background:#D85A30;"></span>Apple HomeKit + Home Assistant integration</li>
+        <li><span class="feat-dot" style="background:#D85A30;"></span>Trained on 2,000+ PSG clinical nights (company claim)</li>
+      </ul>
+
+      <ul class="caveat-list">
+        <li>Price and availability not yet confirmed (pre-launch)</li>
+        <li>No independent accuracy reviews as of early 2026</li>
+        <li>First-gen radar devices historically have variable real-world accuracy</li>
+      </ul>
+
+      <button class="card-action-btn" onclick="sendPrompt('What do we know about the Sleepal AI Lamp accuracy and pricing? Is it worth waiting for? ↗')">Ask about Sleepal ↗</button>
+    </div>
+
+    <!-- Sleep.ai Sleep Sense -->
+    <div class="tracker-card" data-tags="under200 nosub">
+      <div class="card-accent" style="background: #888780;"></div>
+      <div class="card-badge sdk">B2B SDK · not retail</div>
+      <div class="card-device-name">Sleep Sense</div>
+      <div class="card-brand">Sleep.ai (fmr. SleepScore Labs)</div>
+      <div class="card-price-row">
+        <span class="card-price">Enterprise</span>
+        <span class="card-price-note">API / SDK integration — not sold direct</span>
+      </div>
+      <div class="card-divider"></div>
+
+      <div class="accuracy-row">
+        <span class="accuracy-label">Sleep boundaries</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:79%;background:#888780;"></div></div>
+        <span class="accuracy-val" style="color:#888780;">~PSG</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Sleep stages</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:45%;background:#888780;"></div></div>
+        <span class="accuracy-val" style="color:#888780;">Limited</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Population scale</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:95%;background:#888780;"></div></div>
+        <span class="accuracy-val" style="color:#888780;">Excellent</span>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="sensor-chips">
+        <span class="sensor-chip">Smartphone motion</span>
+        <span class="sensor-chip">Light patterns</span>
+        <span class="sensor-chip">Device usage inference</span>
+        <span class="sensor-chip">AI boundary detection</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-cell-label">Hardware needed</div>
+          <div class="metric-cell-val">None — phone only</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Privacy</div>
+          <div class="metric-cell-val">GDPR · ISO compliant</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Training data</div>
+          <div class="metric-cell-val">~1B hours sleep</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-cell-label">Launched</div>
+          <div class="metric-cell-val">Dec 2025</div>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li><span class="feat-dot" style="background:#888780;"></span>Turns any smartphone into a passive sleep sensor</li>
+        <li><span class="feat-dot" style="background:#888780;"></span>No wearable, no additional hardware, no user action</li>
+        <li><span class="feat-dot" style="background:#888780;"></span>Backed by 250+ scientific studies, 1B hrs of data</li>
+        <li><span class="feat-dot" style="background:#888780;"></span>Designed for health apps, insurers, digital therapeutics</li>
+        <li><span class="feat-dot" style="background:#888780;"></span>No audio recording — fully privacy-preserving architecture</li>
+      </ul>
+
+      <ul class="caveat-list">
+        <li>Not a consumer product — requires a partner app/platform</li>
+        <li>Detects sleep/wake boundaries but limited stage granularity</li>
+        <li>Individual consumer cannot buy or install directly</li>
+      </ul>
+
+      <button class="card-action-btn" onclick="sendPrompt('What kind of health apps use Sleep.ai Sleep Sense? How can a consumer access it? ↗')">Ask about Sleep Sense ↗</button>
+    </div>
+
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-cell">
+      <div class="summary-cell-label">Price range</div>
+      <div class="summary-cell-val">$99 – $5k+</div>
+      <div class="summary-cell-sub">across 5 devices</div>
+    </div>
+    <div class="summary-cell">
+      <div class="summary-cell-label">Best accuracy</div>
+      <div class="summary-cell-val">Eight Sleep</div>
+      <div class="summary-cell-sub">HR ~99% vs ECG</div>
+    </div>
+    <div class="summary-cell">
+      <div class="summary-cell-label">Best value</div>
+      <div class="summary-cell-val">Withings Mat</div>
+      <div class="summary-cell-sub">$169 · no sub · FDA</div>
+    </div>
+    <div class="summary-cell">
+      <div class="summary-cell-label">Most frictionless</div>
+      <div class="summary-cell-val">Sleep Sense</div>
+      <div class="summary-cell-sub">smartphone only</div>
+    </div>
+    <div class="summary-cell">
+      <div class="summary-cell-label">Best design</div>
+      <div class="summary-cell-val">Sleepal Lamp</div>
+      <div class="summary-cell-sub">4-sensor · CES 2026</div>
+    </div>
+  </div>
+
+  <div class="note-strip">
+    Accuracy figures sourced from clinical studies, independent reviewer testing, and manufacturer claims (marked *). Sleep stage detection for all consumer-grade devices is typically 65–90% vs. polysomnography gold standard. Eight Sleep Pod 5 pricing starts at $2,549 (Full, cover only) with $24–$29/mo Autopilot subscription required for smart features. Sleepal AI Lamp pricing TBA as of March 2026 — pre-launch campaign expected mid-2026. Sleep.ai Sleep Sense is a B2B API/SDK, not a direct consumer purchase.
+  </div>
+
+</div>
+
+<script>
+function filterCards(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tracker-card').forEach(card => {
+    if (tag === 'all') {
+      card.classList.remove('hidden');
+    } else {
+      const tags = card.dataset.tags || '';
+      if (tags.includes(tag)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    }
+  });
+}
+</script>
